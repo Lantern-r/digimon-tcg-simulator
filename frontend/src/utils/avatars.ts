@@ -1,6 +1,6 @@
 import {Picture} from "./types.ts";
 
-const baseUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/profile_pictures/";
+const baseUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/profile_pictures/";
 
 export const avatars: Picture[] = [
     { name: "AncientIrismon", imagePath: buildUrl("AncientIrismon"), artist: "Tortoiseshel" },

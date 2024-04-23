@@ -12,7 +12,7 @@ import { grey, teal } from '@mui/material/colors';
 import {generalToken} from "../../utils/tokens.ts";
 import hackmonImg from "../../assets/Hackmon.webp";
 
-const tokenImageUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/tokenCard.jpg";
+const tokenImageUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/tokenCard.jpg";
 
 export type ProfileDeckProps = {
     deck: DeckType;

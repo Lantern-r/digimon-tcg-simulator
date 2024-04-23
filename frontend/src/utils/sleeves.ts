@@ -1,7 +1,7 @@
 import {Picture} from "./types.ts";
 
-const baseUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/sleeves/";
-const cardBackUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
+const baseUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/sleeves/";
+const cardBackUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
 
 export const sleeves: Picture[] = [
     {name: "Default", imagePath: cardBackUrl, artist: "Bandai"},

@@ -32,7 +32,7 @@ export default function EditDeck() {
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const cardBackUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
+    const cardBackUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
 
     useEffect(() => {
         setDeckById(id);

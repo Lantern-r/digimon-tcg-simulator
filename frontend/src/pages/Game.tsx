@@ -83,14 +83,14 @@ import {findTokenByName} from "../utils/tokens.ts";
 import TokenButton from "../components/game/TokenButton.tsx";
 import ModifierMenu from "../components/game/ModifierMenu.tsx";
 
-const assetBaseUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/";
+const assetBaseUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/";
 const cardBackUrl = assetBaseUrl + "cardBack.jpg";
 const deckBackUrl = assetBaseUrl + "deckBack.png";
 const eggBackUrl = assetBaseUrl + "eggBack.jpg";
 
 export default function Game({user}: { user: string }) {
     const currentPort = window.location.port;
-    const websocketURL = currentPort === "5173" ? "ws://localhost:8080/api/ws/game" : "wss://www.digi-tcg.online/api/ws/game";
+    const websocketURL = currentPort === "5173" ? "ws://47.95.0.182:80/api/ws/game" : "wss://www.digi-tcg.online/api/ws/game";
 
     const selectedCard = useStore((state) => state.selectedCard);
     const selectCard = useStore((state) => state.selectCard);

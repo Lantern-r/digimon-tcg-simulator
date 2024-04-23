@@ -242,8 +242,8 @@ function saveStarterDeck(name: string, decklist: string[], imgUrl: string, sleev
         });
 }
 
-const st14_10 = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST14-10.webp";
-const st7_09 = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST7-09.webp";
+const st14_10 = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST14-10.webp";
+const st7_09 = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST7-09.webp";
 
 export function addStarterDecks() {
     setTimeout(() => saveStarterDeck("[ADV. STARTER] Beelzemon",  starterBeelzemon, st14_10,"Impmon"), 100);
@@ -294,7 +294,7 @@ export function getDnaColor(word: string): string {
     }
 }
 
-const assetBaseUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/"
+const assetBaseUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/"
 
 export function getAttributeImage(attribute: string | null | undefined) {
     const baseUrl = assetBaseUrl + "attribute_icons/";

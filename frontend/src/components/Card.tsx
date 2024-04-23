@@ -22,7 +22,7 @@ const opponentBALocations = ["opponentDigi1", "opponentDigi2", "opponentDigi3", 
 
 const opponentFieldLocations = [...opponentBALocations, "opponentReveal", "opponentDeckField", "opponentEggDeck", "opponentTrash", "opponentSecurity"];
 
-const cardBackUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
+const cardBackUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
 
 type CardProps = {
     card: CardTypeWithId | CardTypeGame,

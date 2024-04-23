@@ -22,7 +22,7 @@ export default function Deckbuilder() {
     const decks = useStore((state) => state.decks);
     const fetchCards = useStore((state) => state.fetchCards);
 
-    const cardBackUrl = "https://raw.githubusercontent.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
+    const cardBackUrl = "https://raw.gitmirror.com/WE-Kaito/digimon-tcg-simulator/main/frontend/src/assets/cardBack.jpg";
 
     useEffect(() => {
         clearDeck();
