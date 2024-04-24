@@ -90,7 +90,7 @@ const eggBackUrl = assetBaseUrl + "eggBack.jpg";
 
 export default function Game({user}: { user: string }) {
     const currentPort = window.location.port;
-    const websocketURL = currentPort === "5173" ? "ws://47.95.0.182:80/api/ws/game" : "wss://www.digi-tcg.online/api/ws/game";
+    const websocketURL = currentPort === "5173" ? "ws://localhost:8080/api/ws/game" : "ws://47.95.0.182:80/api/ws/game";
 
     const selectedCard = useStore((state) => state.selectedCard);
     const selectCard = useStore((state) => state.selectCard);
@@ -1083,7 +1083,7 @@ export default function Game({user}: { user: string }) {
                                 <span style={{color: "dodgerblue"}}>🛈 </span>Rulings
                             </a>
                             <a
-                                href="https://github.com/WE-Kaito/digimon-tcg-simulator/wiki/Features-&-Controls#game-%EF%B8%8F"
+                                href="https://cdn.jsdelivr.net/gh//WE-Kaito/digimon-tcg-simulator/wiki/Features-&-Controls#game-%EF%B8%8F"
                                 target="_blank"
                                 rel="noopener noreferrer">
                                 <span style={{color: "dodgerblue"}}>🛈 </span>Controls

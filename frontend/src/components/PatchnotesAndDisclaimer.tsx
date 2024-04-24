@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export default function PatchnotesAndDisclaimer() {
     return (
         <Wrapper >
-            <Patchnotes href={"https://github.com/WE-Kaito/digimon-tcg-simulator/wiki/Patchnotes"}
+            <Patchnotes href={"https://cdn.jsdelivr.net/gh//WE-Kaito/digimon-tcg-simulator/wiki/Patchnotes"}
                         target="_blank" rel="noopener noreferrer">
                 last patch: 20.4.2024
             </Patchnotes>
