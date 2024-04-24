@@ -535,16 +535,11 @@ export const useStore = create<State>((set, get) => ({
     loadOrderedDecks: (setOrderedDecks) => {
         set ({isLoading: true});
         axios
-            .get("/api/profile/cards")
-            .then((res) => res.data)
-            .catch(console.error)
-            .then((data) => set({ fetchedCards: data.map((card: CardType) => ({...card, id: uid()})) }))
-            .then(() => axios
                 .get("/api/profile/decks")
                 .then((res) => res.data)
                 .catch(console.error)
                 .then((data) => set({decks: data}))
-            )
+            
             .then(() => {
                 const savedDeckIdOrder : DeckIdOrder | null = JSON.parse(localStorage.getItem('deckIdOrder') ?? 'null');
                 set({deckIdOrder: savedDeckIdOrder ?? get().decks.map((deck) => deck.id)});

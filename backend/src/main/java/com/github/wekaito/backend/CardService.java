@@ -109,7 +109,8 @@ public class CardService {
         FetchChineseCard fetchedChineseCards = gson.fromJson(responseBodyFromDigicamoe, listTypeInChinese);
         List<ChineseCard> chineseCards = new ArrayList<>();
         String[] colorsInChinese = {"红", "蓝", "黄", "绿", "黑", "白", "紫"};
-        String imgUrl = "https://dtcg-pics.moecard.cn/img/";
+        // String imgUrl = "https://dtcg-pics.moecard.cn/img/"; Jp
+        String imgUrl = "https://dtcg-wechat.moecard.cn/img/card/"; // Cn
 
         assert fetchedChineseCards.data().list() != null;
 
@@ -184,7 +185,7 @@ public class CardService {
             cards.add(new Card(
                     card.id(),
                     (chineseCard != null) ? chineseCard.name() : card.name().english(),
-                    baseUrl + card.cardImage(),
+                    baseUrl + card.cardImage() ,
                     card.cardType(),
                     colors,
                     (card.attribute().equals("-")) ? null : card.attribute(),
