@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import {ChangeEvent, useState} from "react";
 import {useStore} from "../../hooks/useStore.ts";
 import {Radio} from "@mui/material";
+import axios from "axios";
+import {ChineseCardTemp} from "../../utils/types.ts";
 
 export default function DeckImport({ deckName }:{ deckName: string}) {
 
@@ -11,12 +13,46 @@ export default function DeckImport({ deckName }:{ deckName: string}) {
     const [copyButton, setCopyButton] = useState<boolean>(false);
     const [invalidButton, setInvalidButton] = useState<boolean>(false);
     const fetchedCards = useStore((state) => state.fetchedCards);
-    const [exportFormat, setExportFormat] = useState('pd');
+    const [exportFormat, setExportFormat] = useState('base64');
 
     function handleImport() {
         if (exportFormat === 'text') {
             importDeck(deckString, exportFormat);
             return;
+        }
+
+        if (exportFormat === 'base64') {
+            const containsDDSQC = deckString.includes("DDSQC");
+            if (containsDDSQC) {
+                const deckUnit8Array = Uint8Array.from(atob(deckString.replace("DDSQC", "")), (c) => c.charCodeAt(0));
+                const prefix = Uint8Array.from("DCGDV1", (c) => c.charCodeAt(0));
+                const formData = new FormData();
+                formData.append('deck', new Blob([prefix, deckUnit8Array], {type: 'application/x-dcg-deck'}), 'blob');
+                axios.post('https://api.digicamoe.com/api/community/decks/load',  formData)
+                    .then(response => {
+                        function addCardsToDeck(cards: ChineseCardTemp[], deck: string[]) {
+                            cards.forEach(card => {
+                                for (let i = 0; i < card.number; i++) {
+                                    deck.push(card.card.serial);
+                                }
+                            });
+                        }
+
+                        const deck_info = response.data.data.deck_info;
+                        const deckToImport : string[]= [];
+
+                        addCardsToDeck(deck_info.eggs, deckToImport);
+                        addCardsToDeck(deck_info.main, deckToImport);
+
+                        importDeck(deckToImport, exportFormat);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        invalidImport();
+                    })
+            } else {
+                invalidImport();
+            }
         }
 
         try {
@@ -60,7 +96,7 @@ export default function DeckImport({ deckName }:{ deckName: string}) {
     return (
         <Container>
             <StyledFieldset>
-                <TextArea value={deckString} placeholder={'PD:  ["BT1-001_P1", ...] (includes Alternate Arts)\nTTS: ["BT1-001", "BT1-001", "EX5-023", ...]\nText: digimoncard.dev text format'}
+                <TextArea value={deckString} placeholder={'PD:  ["BT1-001_P1", ...] (includes Alternate Arts)\nTTS: ["BT1-001", "BT1-001", "EX5-023", ...]\nText: digimoncard.dev text format\nBase64: app.digicamoe.cn base64 format'}
                           onChange={(e) => setDeckString(e.target.value)}/>
                 {!invalidButton && <ImportButton onClick={handleImport}>IMPORT</ImportButton>}
                 {invalidButton && <ImportButton style={{background: "crimson"}}>INVALID!</ImportButton>}
@@ -71,73 +107,109 @@ export default function DeckImport({ deckName }:{ deckName: string}) {
 
                     <div style={{display: "flex", gap: 12}}>
                         <div style={{position: "relative"}}>
-                            <span style={{ fontFamily: "League Spartan, sans-serif" }}>PD</span>
+                            <span style={{fontFamily: "League Spartan, sans-serif"}}>PD</span>
                             <Radio
                                 checked={exportFormat === 'pd'}
                                 onChange={handleChange}
                                 value="pd"
                                 name="radio-buttons"
                                 size="small"
-                                sx={{position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)" , width: 5}}
+                                sx={{
+                                    position: "absolute",
+                                    top: 12,
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    width: 5
+                                }}
                             />
                         </div>
 
                         <div style={{position: "relative", marginLeft: 3}}>
-                            <span style={{ fontFamily: "League Spartan, sans-serif" }}>TTS</span>
+                            <span style={{fontFamily: "League Spartan, sans-serif"}}>TTS</span>
                             <Radio
                                 checked={exportFormat === 'tts'}
                                 onChange={handleChange}
                                 value="tts"
                                 name="radio-buttons"
                                 size="small"
-                                sx={{position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)" , width: 5}}
+                                sx={{
+                                    position: "absolute",
+                                    top: 12,
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    width: 5
+                                }}
                             />
                         </div>
 
-                            <div style={{position: "relative"}}>
-                                <span style={{ fontFamily: "League Spartan, sans-serif" }}>Text</span>
-                                <Radio
-                                    checked={exportFormat === 'text'}
-                                    onChange={handleChange}
-                                    value="text"
-                                    name="radio-buttons"
-                                    size="small"
-                                    sx={{position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)" , width: 5}}
-                                />
-                            </div>
+                        <div style={{position: "relative"}}>
+                            <span style={{fontFamily: "League Spartan, sans-serif"}}>Text</span>
+                            <Radio
+                                checked={exportFormat === 'text'}
+                                onChange={handleChange}
+                                value="text"
+                                name="radio-buttons"
+                                size="small"
+                                sx={{
+                                    position: "absolute",
+                                    top: 12,
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    width: 5
+                                }}
+                            />
                         </div>
+
+                        <div style={{position: "relative"}}>
+                            <span style={{fontFamily: "League Spartan, sans-serif"}}>Base64</span>
+                            <Radio
+                                checked={exportFormat === 'base64'}
+                                onChange={handleChange}
+                                value="base64"
+                                name="radio-buttons"
+                                size="small"
+                                sx={{
+                                    position: "absolute",
+                                    top: 12,
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    width: 5
+                                }}
+                            />
+                        </div>
+                    </div>
 
                 </ExportContainer>
 
             </StyledFieldset>
         </Container>
-);
+    );
 }
 
 const Container = styled.div`
-width: 97%;
-margin: 0 1.5% 0 1.5%;
-border-radius: 5px;
-height: 150px;
-background: rgba(100, 108, 255, 0.64);
-display: flex;
-justify-content: center;
-align-items: center;
-grid-area: import-export-area;
-transform: translateY(2px);
+    width: 97%;
+    margin: 0 1.5% 0 1.5%;
+    border-radius: 5px;
+    height: 150px;
+    background: rgba(100, 108, 255, 0.64);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-area: import-export-area;
+    transform: translateY(2px);
 `;
 
 const StyledFieldset = styled.fieldset`
-width: 90%;
-height: 96px;
-border-radius: 5px;
-display: grid;
-grid-template-columns: 4.2fr 1fr;
-grid-template-rows: 1fr 3fr;
-grid-template-areas: "input import"
+    width: 90%;
+    height: 96px;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 4.2fr 1fr;
+    grid-template-rows: 1fr 3fr;
+    grid-template-areas: "input import"
                      "input export";
 
-@container (max-width: 449px) {
+@container (max-width: 449 px) {
     width: 92%;
 }
 `;

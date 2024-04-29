@@ -25,6 +25,55 @@ export type CardType = {
     illustrator: string
 }
 
+export type ChineseCardTemp = {
+    card: ChineseCardType,
+    number: number
+}
+
+export type ChineseCardType = {
+    card_id: string;
+    card_pack: string;
+    serial: string;
+    sub_serial: string;
+    japName: string;
+    scName: string;
+    rarity: string;
+    type: string;
+    color: string[];
+    level: string;
+    cost: string;
+    cost_1: string;
+    evo_cond: string;
+    DP: string;
+    overflow: string;
+    grade: string;
+    attribute: string;
+    class: string[];
+    effect: string;
+    evo_cover_effect: string;
+    security_effect: string;
+    rule_text: string;
+    overflow_text: string;
+    include_info: string;
+    rarity$SC: string;
+    package: Package;
+    images: CardImage[];
+}
+
+type Package = {
+    pack_id: string,
+    pack_prefix : string,
+    language: string
+}
+
+type CardImage = {
+    id: string,
+    card_id: string,
+    img_rare: string,
+    img_path: string,
+    thumb_path: string
+}
+
 type DigivolveCondition = {
     color: string,
     cost: number,
