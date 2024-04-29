@@ -43,7 +43,7 @@ type State = {
     filterCards: SearchCards,
     selectCard: (card: CardTypeWithId | CardTypeGame | null) => void,
     setHoverCard: (card: CardTypeWithId | CardTypeGame | null) => void,
-    addCardToDeck: (cardnumber: string, type: string, uniqueCardNumber: string) => void,
+    addCardToDeck: (cardNumber: string, type: string, uniqueCardNumber: string) => void,
     deleteFromDeck: (id: string) => void,
     saveDeck: (name: string) => void,
     fetchDecks: () => void,
@@ -59,8 +59,8 @@ type State = {
     getActiveDeck: () => void,
     setAvatar: (avatarName: string) => void,
     getAvatar: () => string,
-    importDeck: (decklist: string | string[], format: string) => void,
-    exportDeck: (exportFormat: string, deckname: string) => string,
+    importDeck: (deckList: string | string[], format: string) => void,
+    exportDeck: (exportFormat: string, deckName: string) => string,
 
     usernameForRecovery: string,
     recoveryQuestion: string,
@@ -270,7 +270,7 @@ export const useStore = create<State>((set, get) => ({
         const sortedDeck = sortCards(get().deckCards);
         const deckWithoutId = {
             name: name,
-            decklist: sortedDeck.map((card) => card.uniqueCardNumber),
+            deckList: sortedDeck.map((card) => card.uniqueCardNumber),
             isAllowed_en: getIsDeckAllowed(sortedDeck, "en"),
             isAllowed_jp: getIsDeckAllowed(sortedDeck, "jp")
         }
@@ -421,22 +421,22 @@ export const useStore = create<State>((set, get) => ({
     importDeck: (decklist, format) => {
         set({loadingDeck: true});
 
-        const constructedDecklist: string[] = [];
+        const constructedDeckList: string[] = [];
         if (format === "text") {
             (decklist as string).split("\n").forEach((line) => {
                 const linesSplits = line.split(" ");
                 if (linesSplits.length < 2 || !Number(linesSplits[0])) return;
                 const amount = Number(linesSplits[0]);
-                const cardnumber = linesSplits[linesSplits.length - 1];
+                const cardNumber = linesSplits[linesSplits.length - 1];
                 for (let i = 0; i < amount; i++) {
-                    constructedDecklist.push(cardnumber);
+                    constructedDeckList.push(cardNumber);
                 }
             });
         }
 
-        const cardsWithId: CardTypeWithId[] = (format === "text" ? constructedDecklist : decklist as string[])
-            .map((cardnumber: string) => ({
-                ...get().fetchedCards.filter((card) => card.uniqueCardNumber === cardnumber)[0],
+        const cardsWithId: CardTypeWithId[] = (format === "text" ? constructedDeckList : decklist as string[])
+            .map((cardNumber: string) => ({
+                ...get().fetchedCards.filter((card) => card.uniqueCardNumber === cardNumber)[0],
                 id: uid()
             }))
             .filter((card) => card.name !== undefined);
@@ -465,26 +465,26 @@ export const useStore = create<State>((set, get) => ({
         return () => clearTimeout(timeout);
     },
 
-    exportDeck: (exportFormat, deckname): string => {
+    exportDeck: (exportFormat, deckName): string => {
 
         if (exportFormat === "text") {
             const deckCards = get().deckCards;
             const uniqueCardsMap = new Map();
             deckCards.forEach((card) => uniqueCardsMap.set(card.cardNumber, card));
             const uniqueCards = Array.from(uniqueCardsMap.values());
-            const decklist = uniqueCards.map((card) => {
+            const deckList = uniqueCards.map((card) => {
                 const cardCount = deckCards.filter((c) => c.cardNumber === card.cardNumber).length
                 return `${cardCount} ${card.name} ${card.cardNumber}`;
             }).join("\n");
-            return `// ${deckname}\n\n${decklist}`;
+            return `// ${deckName}\n\n${deckList}`;
         }
 
         if (exportFormat === "tts") {
-            const decklist = get().deckCards.map((card) => card.cardNumber);
-            return JSON.stringify(decklist);
+            const deckList = get().deckCards.map((card) => card.cardNumber);
+            return JSON.stringify(deckList);
         } else {
-            const decklist = get().deckCards.map((card) => card.uniqueCardNumber);
-            return JSON.stringify(decklist);
+            const deckList = get().deckCards.map((card) => card.uniqueCardNumber);
+            return JSON.stringify(deckList);
         }
     },
 
@@ -535,11 +535,16 @@ export const useStore = create<State>((set, get) => ({
     loadOrderedDecks: (setOrderedDecks) => {
         set ({isLoading: true});
         axios
+            .get("/api/profile/cards")
+            .then((res) => res.data)
+            .catch(console.error)
+            .then((data) => set({ fetchedCards: data.map((card: CardType) => ({...card, id: uid()})) }))
+            .then(() => axios
                 .get("/api/profile/decks")
                 .then((res) => res.data)
                 .catch(console.error)
                 .then((data) => set({decks: data}))
-            
+            )
             .then(() => {
                 const savedDeckIdOrder : DeckIdOrder | null = JSON.parse(localStorage.getItem('deckIdOrder') ?? 'null');
                 set({deckIdOrder: savedDeckIdOrder ?? get().decks.map((deck) => deck.id)});
