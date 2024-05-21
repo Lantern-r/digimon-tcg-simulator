@@ -663,7 +663,10 @@ export default function Game({user}: { user: string }) {
         websocket.sendMessage(`${gameId}:/updateAttackPhase:${opponentName}:${attackPhase}`);
     }
 
-    function sendSetModifiers(cardId: string, location: string, modifiers: CardModifiers) {
+    function sendSetModifiers(cardId: string | undefined, location: string | undefined, modifiers: {
+        plusDp: number;
+        plusSecurityAttacks: number
+    }) {
         websocket.sendMessage(`${gameId}:/setModifiers:${opponentName}:${cardId}:${location}:${JSON.stringify(modifiers)}`);
         sendSfx("playModifyCardSfx");
     }
@@ -860,7 +863,7 @@ export default function Game({user}: { user: string }) {
 
     function resetModifiers({props}: ItemParams<FieldCardContextMenuItemProps>) {
         if (props === undefined) return;
-        const modifiers = { plusDp: 0, plusSecurityAttacks: 0 };
+        const modifiers: CardModifiers = { plusDp: 0, plusSecurityAttacks: 0, keywords: [""] };
         setModifiers(props?.id, props?.location, modifiers);
         sendSetModifiers(props?.id, props?.location, modifiers);
         playModifyCardSfx();
