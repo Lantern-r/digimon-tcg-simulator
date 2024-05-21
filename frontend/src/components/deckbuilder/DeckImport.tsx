@@ -45,6 +45,7 @@ export default function DeckImport({ deckName }:{ deckName: string}) {
                         addCardsToDeck(deck_info.main, deckToImport);
 
                         importDeck(deckToImport, exportFormat);
+                        setDeckString("");
                     })
                     .catch(error => {
                         console.error(error);
@@ -53,6 +54,7 @@ export default function DeckImport({ deckName }:{ deckName: string}) {
             } else {
                 invalidImport();
             }
+            return;
         }
 
         try {

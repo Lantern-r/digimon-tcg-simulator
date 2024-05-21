@@ -5,8 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators.In;
-import org.springframework.data.mongodb.core.aggregation.VariableOperators.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,17 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.text.html.Option;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +87,7 @@ public class CardService {
 
     @Scheduled(fixedRate = 10800000) // 3 hours
     void fetchCards() {
-        String responseBodyFromDigicamoe = webClient2.post()
+        String responseBodyFromDigimon = webClient2.post()
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(String.class)
@@ -106,18 +96,18 @@ public class CardService {
         Type listTypeInChinese = new TypeToken<FetchChineseCard>() {
         }.getType();
         
-        FetchChineseCard fetchedChineseCards = gson.fromJson(responseBodyFromDigicamoe, listTypeInChinese);
+        FetchChineseCard fetchedChineseCards = gson.fromJson(responseBodyFromDigimon, listTypeInChinese);
         List<ChineseCard> chineseCards = new ArrayList<>();
         String[] colorsInChinese = {"红", "蓝", "黄", "绿", "黑", "白", "紫"};
         // String imgUrl = "https://dtcg-pics.moecard.cn/img/"; Jp
         String imgUrl = "https://dtcg-wechat.moecard.cn/img/card/"; // Cn
 
-        assert fetchedChineseCards.data().list() != null;
+        assert Objects.requireNonNull(fetchedChineseCards).data().list() != null;
 
         fetchedChineseCards.data().list().forEach(card -> {
             
             String specialDigivolve = null;
-            if (card.evo_cond() != null && !card.evo_cond().equals("") && !card.evo_cond().equals("-")) {
+            if (card.evo_cond() != null && !card.evo_cond().isEmpty() && !card.evo_cond().equals("-")) {
                 String[] evo_conds = card.evo_cond().split("\n");
                 String evo_cond = evo_conds[0];
 
@@ -167,7 +157,9 @@ public class CardService {
 
         assert fetchedCards != null;
         fetchedCards.forEach(card -> {
-
+            if (card.id().contains("BT18")) {
+                return;
+            }
             List<DigivolveCondition> digivolveConditions = card.digivolveCondition().stream()
                     .map(condition -> new DigivolveCondition(
                             condition.color(),
@@ -185,7 +177,7 @@ public class CardService {
             cards.add(new Card(
                     card.id(),
                     (chineseCard != null) ? chineseCard.name() : card.name().english(),
-                    baseUrl + card.cardImage() ,
+                    (chineseCard != null) ? chineseCard.imgUrl() : baseUrl + card.cardImage(),
                     card.cardType(),
                     colors,
                     (card.attribute().equals("-")) ? null : card.attribute(),

@@ -59,7 +59,7 @@ type State = {
     getActiveDeck: () => void,
     setAvatar: (avatarName: string) => void,
     getAvatar: () => string,
-    importDeck: (deckList: string | string[], format: string) => void,
+    importDeck: (decklist: string | string[], format: string) => void,
     exportDeck: (exportFormat: string, deckName: string) => string,
 
     usernameForRecovery: string,
@@ -270,7 +270,7 @@ export const useStore = create<State>((set, get) => ({
         const sortedDeck = sortCards(get().deckCards);
         const deckWithoutId = {
             name: name,
-            deckList: sortedDeck.map((card) => card.uniqueCardNumber),
+            decklist: sortedDeck.map((card) => card.uniqueCardNumber),
             isAllowed_en: getIsDeckAllowed(sortedDeck, "en"),
             isAllowed_jp: getIsDeckAllowed(sortedDeck, "jp")
         }
@@ -472,19 +472,19 @@ export const useStore = create<State>((set, get) => ({
             const uniqueCardsMap = new Map();
             deckCards.forEach((card) => uniqueCardsMap.set(card.cardNumber, card));
             const uniqueCards = Array.from(uniqueCardsMap.values());
-            const deckList = uniqueCards.map((card) => {
+            const decklist = uniqueCards.map((card) => {
                 const cardCount = deckCards.filter((c) => c.cardNumber === card.cardNumber).length
                 return `${cardCount} ${card.name} ${card.cardNumber}`;
             }).join("\n");
-            return `// ${deckName}\n\n${deckList}`;
+            return `// ${deckName}\n\n${decklist}`;
         }
 
         if (exportFormat === "tts") {
-            const deckList = get().deckCards.map((card) => card.cardNumber);
-            return JSON.stringify(deckList);
+            const decklist = get().deckCards.map((card) => card.cardNumber);
+            return JSON.stringify(decklist);
         } else {
-            const deckList = get().deckCards.map((card) => card.uniqueCardNumber);
-            return JSON.stringify(deckList);
+            const decklist = get().deckCards.map((card) => card.uniqueCardNumber);
+            return JSON.stringify(decklist);
         }
     },
 
