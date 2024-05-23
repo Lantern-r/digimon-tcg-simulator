@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -68,18 +69,6 @@ public class CardService {
                     .build())
             .build();
 
-
-    private final WebClient webClient2 = WebClient.builder()
-            .baseUrl("https://api.digicamoe.com/api/cdb/cards/search?page=1&limit=100000")
-            .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-            .defaultHeader(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.toString())
-            .exchangeStrategies(ExchangeStrategies.builder()
-                    .codecs(configurer -> configurer
-                            .defaultCodecs()
-                            .maxInMemorySize(1024 * 1024 * 10))
-                    .build())
-            .build();
-
     @PostConstruct
     public void init() {
         fetchCards();
@@ -87,11 +76,35 @@ public class CardService {
 
     @Scheduled(fixedRate = 10800000) // 3 hours
     void fetchCards() {
-        String responseBodyFromDigimon = webClient2.post()
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+        WebClient webClient2 = WebClient.create();
+
+        Map<String, Object> json_data = new HashMap<>();
+        json_data.put("keyword", "");
+        json_data.put("language", "chs");
+        json_data.put("class_input", false);
+        json_data.put("card_pack", 0);
+        json_data.put("type", "");
+        json_data.put("color", List.of());
+        json_data.put("rarity", List.of());
+        json_data.put("tags", List.of());
+        json_data.put("tags__logic", "or");
+        json_data.put("order_type", "default");
+        json_data.put("evo_cond", List.of(new HashMap<>()));
+        json_data.put("qField", List.of());
+
+        String responseBodyFromDigimon  = webClient2.post()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("https")
+                        .host("api.digicamoe.com")
+                        .path("/api/cdb/cards/search")
+                        .queryParam("page", "1")
+                        .queryParam("limit", "1000000")
+                        .build())
+                .body(BodyInserters.fromValue(json_data))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
         Type listTypeInChinese = new TypeToken<FetchChineseCard>() {
         }.getType();
@@ -99,8 +112,7 @@ public class CardService {
         FetchChineseCard fetchedChineseCards = gson.fromJson(responseBodyFromDigimon, listTypeInChinese);
         List<ChineseCard> chineseCards = new ArrayList<>();
         String[] colorsInChinese = {"红", "蓝", "黄", "绿", "黑", "白", "紫"};
-        // String imgUrl = "https://dtcg-pics.moecard.cn/img/"; Jp
-        String imgUrl = "https://dtcg-wechat.moecard.cn/img/card/"; // Cn
+        String imgUrl = "https://dtcg-wechat.moecard.cn/img/";
 
         assert Objects.requireNonNull(fetchedChineseCards).data().list() != null;
 
@@ -157,14 +169,12 @@ public class CardService {
 
         assert fetchedCards != null;
         fetchedCards.forEach(card -> {
-            if (card.id().contains("BT18")) {
-                return;
-            }
+
             List<DigivolveCondition> digivolveConditions = card.digivolveCondition().stream()
                     .map(condition -> new DigivolveCondition(
                             condition.color(),
                             Integer.parseInt(condition.cost()),
-                            Integer.parseInt(condition.level())
+                            !condition.level().equals("Tamer") ? Integer.parseInt(condition.level()) : null
                     ))
                     .toList();
 
