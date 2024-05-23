@@ -118,7 +118,7 @@ public class CardService {
         FetchChineseCard fetchedChineseCards = gson.fromJson(responseBodyFromDigimon, listTypeInChinese);
         List<ChineseCard> chineseCards = new ArrayList<>();
         String[] colorsInChinese = {"红", "蓝", "黄", "绿", "黑", "白", "紫"};
-        String imgUrl = "https://dtcg-wechat.moecard.cn/img/";
+        String imgUrl = "https://dtcg-pics.moecard.cn/img/";
 
         assert Objects.requireNonNull(fetchedChineseCards).data().list() != null;
 

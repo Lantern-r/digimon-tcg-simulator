@@ -252,10 +252,10 @@ function saveStarterDeck(name: string, decklist: string[], imgUrl: string, sleev
         });
 }
 
-const deckImgDragonOfCourage = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST15-12.webp";
-const deckImgGallantmon = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST7-09.webp";
-const deckImgBeelzemon = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST14-10.webp";
-const deckImgVortexWarriors = "https://raw.githubusercontent.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/P-038_P4-J.webp";
+const deckImgDragonOfCourage = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST15-12.webp";
+const deckImgGallantmon = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST7-09.webp";
+const deckImgBeelzemon = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/ST14-10.webp";
+const deckImgVortexWarriors = "https://raw.gitmirror.com/TakaOtaku/Digimon-Card-App/main/src/assets/images/cards/P-038_P4-J.webp";
 
 export function addStarterDecks() {
     setTimeout(() => saveStarterDeck("[STARTER] Dragon Of Courage", starterDragonOfCourage, deckImgDragonOfCourage, "Agumon"), 100);

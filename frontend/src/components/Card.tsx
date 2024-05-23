@@ -224,6 +224,8 @@ export default function Card( props : CardProps ) {
                     </CardAnimationContainer>}
             </>}
 
+
+
             <StyledImage
                 ref={!opponentFieldLocations.includes(location) && opponentReady ? drag : undefined}
                 onClick={handleClick}
