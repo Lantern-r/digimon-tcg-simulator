@@ -76,7 +76,13 @@ public class CardService {
 
     @Scheduled(fixedRate = 10800000) // 3 hours
     void fetchCards() {
-        WebClient webClient2 = WebClient.create();
+        WebClient webClient2 = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(1024 * 1024 * 10))
+                .build())
+                .build();
 
         Map<String, Object> json_data = new HashMap<>();
         json_data.put("keyword", "");
